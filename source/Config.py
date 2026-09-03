@@ -26,6 +26,10 @@ class Solv:
     h: smoothing length. 0 이면 h_factor * dx 로 자동 계산
     h_factor: h 자동 계산에 쓰는 배수 (h = h_factor * dx)
     kernel_type: SPH 커널 종류 ("cubic" 또는 "wendland")
+
+    # PDE solver hyperparameter
+    dt: 시간 간격. 0 이면 cfl * h / c0 로 자동 계산
+    n_steps: 순방향 시뮬레이션 스텝 수
     """
     # project property
     device: str = "cuda:0"
@@ -49,3 +53,7 @@ class Solv:
     h: float = 0.0
     h_factor: float = 1.3
     kernel_type: str = "cubic"
+
+    # PDE solver hyperparameter
+    dt: float = 0.0
+    n_steps: int = 4000

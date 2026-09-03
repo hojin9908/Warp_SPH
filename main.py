@@ -7,6 +7,7 @@ import warp as wp
 from source.Config import Solv
 from source.struct import SPHptl, BNDptl
 from source.gen_ptl import DamPtlGeneration
+from source.Simulation import SPH_OneStep
 
 
 def parsing() -> dict[str, Any]:
@@ -18,7 +19,18 @@ def parsing() -> dict[str, Any]:
     return args
 
 
-def run_forward(solv: Solv, P_sph: SPHptl, P_bnd: BNDptl):
+def run_forward(solv: Solv, P_sph: SPHptl, P_bnd: BNDptl) -> None:
+    """
+    Run Forward SPH Simulation
+
+    solv: configuration of solv file
+    P_sph: Particle structure of SPH particles      [N_sph]
+    P_bnd: Particle structure of BND particles      [N_bnd] 
+    """
+    print(f"\n[forward] {solv.n_steps} step \t\t (t={solv.n_steps*solv.dt:.3f} s\tdt={solv.dt:.1e} s)\n")
+    for _ in range(solv.n_steps):
+        SPH_OneStep(solv.dt, P_sph, P_bnd)
+    
 
 
 
