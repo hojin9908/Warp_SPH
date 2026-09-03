@@ -1,0 +1,51 @@
+from dataclasses import dataclass
+from typing import Any
+
+@dataclass
+class Solv:
+    """
+    # project property
+    device: 계산에 쓸 디바이스 ("cuda:0", "cpu" ...)
+
+    # simulation setting
+    dx: 입자 간격
+    tank_width: 수조 내부 폭
+    tank_height: 수조 내부 높이 (위쪽은 열려 있다)
+    fluid_width: 초기 유체 블록 폭
+    fluid_height: 초기 유체 블록 높이
+    fluid_origin_x: 유체 블록 왼쪽 아래 모서리 x
+    fluid_origin_y: 유체 블록 왼쪽 아래 모서리 y
+    bnd_layer: dummy boundary particle 겹 수
+
+    # physical coefficient
+    rho0: 기준 밀도
+    gamma: Tait 지수 (1<=gamma<=7)
+    c0: 수치 음속. 0 이면 10*sqrt(2*g*fluid_height) 로 자동 계산
+    mu: 점성계수 [Pa s]
+    g: 중력 가속도
+    h: smoothing length. 0 이면 h_factor * dx 로 자동 계산
+    h_factor: h 자동 계산에 쓰는 배수 (h = h_factor * dx)
+    kernel_type: SPH 커널 종류 ("cubic" 또는 "wendland")
+    """
+    # project property
+    device: str = "cuda:0"
+
+    # simulation setting
+    dx: float = 0.02
+    tank_width: float = 2.0
+    tank_height: float = 1.0
+    fluid_width: float = 0.5
+    fluid_height: float = 0.5
+    fluid_origin_x: float = 0.0
+    fluid_origin_y: float = 0.0
+    bnd_layer: int = 3
+
+    # physical coefficient
+    rho0: float = 1000.0
+    gamma: float = 7.0
+    c0: float = 0.0
+    mu: float = 0.05
+    g: float = 9.81
+    h: float = 0.0
+    h_factor: float = 1.3
+    kernel_type: str = "cubic"

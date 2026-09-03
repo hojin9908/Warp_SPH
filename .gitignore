@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Warp kernel cache
+warp/
+.warp_cache/
+
+# Output / results
+output/
+results/
+*.vtk
+*.vtu
+*.npy
+*.npz
+*.h5
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
