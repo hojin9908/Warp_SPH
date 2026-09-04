@@ -18,6 +18,7 @@ warp/
 # Output / results
 output/
 results/
+animation/
 *.vtk
 *.vtu
 *.npy

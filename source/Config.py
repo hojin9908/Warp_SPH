@@ -38,6 +38,7 @@ class Solv:
 
     # output
     output_step: 입자 상태를 vtk 로 뽑는 주기 [step]. 0 이면 출력하지 않는다
+    gif_save: True 면 같은 주기의 프레임으로 gif 애니메이션도 만든다
 
     # hash grid
     grid_slice: HashGrid 해시 버킷 한 변의 개수
@@ -53,14 +54,14 @@ class Solv:
     fluid_height: float = 0.5
     fluid_origin_x: float = 0.0
     fluid_origin_y: float = 0.0
-    bnd_layer: int = 4
-    h: float = 2.0 * 0.02
-    support: float = 2.0 * (2.0 * 0.02)
+    bnd_layer: int = 3
+    h: float = 1.3 * 0.02
+    support: float = 2.0 * (1.3 * 0.02)
 
     # physical coefficient
     rho0: float = 1000.0
     gamma: float = 7.0
-    c0: float = 50.0
+    c0: float = 31.3209
     mu: float = 0.05
     g: float = 9.81
     h_factor: float = 1.3
@@ -70,11 +71,12 @@ class Solv:
     shepard_step: int = 20
 
     # PDE solver hyperparameter
-    dt: float = 1e-5
-    n_steps: int = 50000
+    dt: float = 2.0753e-4
+    n_steps: int = 4000
 
     # output
-    output_step: int = 500
+    output_step: int = 40
+    gif_save: bool = True
 
     # hash grid
     grid_slice: int = 128

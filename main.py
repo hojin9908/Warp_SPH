@@ -9,6 +9,7 @@ from source.struct import SPHptl, BNDptl
 from source.gen_ptl import DamPtlGeneration
 from source.Simulation import SPH_OneStep
 from source.output import save_vtk, save_pvd
+from source.gif_gen import collect_frame, save_gif
 
 
 def parsing() -> dict[str, Any]:
@@ -39,8 +40,12 @@ def run_forward(solv: Solv,
 
     # [(file name, t), ...] of every frame written, collected for the .pvd
     frames: list[tuple[str, float]] = []
+    # host side copies of the same frames, kept only when a gif is wanted
+    gif_frames: list[dict] = []
     if solv.output_step > 0:
         frames.append(save_vtk(P_sph, P_bnd, 0, 0.0))
+        if solv.gif_save:
+            gif_frames.append(collect_frame(P_sph, P_bnd, 0.0))
 
     for step in range(solv.n_steps):
         grid_sph.build(points=P_sph.pos, radius=solv.support)
@@ -49,7 +54,13 @@ def run_forward(solv: Solv,
         # the state after this step belongs to step+1
         if solv.output_step > 0 and (step + 1) % solv.output_step == 0:
             frames.append(save_vtk(P_sph, P_bnd, step + 1, (step + 1) * solv.dt))
+            if solv.gif_save:
+                gif_frames.append(collect_frame(P_sph, P_bnd, (step + 1) * solv.dt))
             print(f"[output] step {step+1:>6d} / {solv.n_steps}\t t={(step+1)*solv.dt:.4f} s")
+
+    if gif_frames:
+        gif = save_gif(gif_frames, solv)
+        print(f"\n[output] {len(gif_frames)} frames -> {gif}")
 
     if frames:
         path = save_pvd(frames)
