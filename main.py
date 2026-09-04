@@ -8,6 +8,7 @@ from source.Config import Solv
 from source.struct import SPHptl, BNDptl
 from source.gen_ptl import DamPtlGeneration
 from source.Simulation import SPH_OneStep
+from source.output import save_vtk, save_pvd
 
 
 def parsing() -> dict[str, Any]:
@@ -19,17 +20,40 @@ def parsing() -> dict[str, Any]:
     return args
 
 
-def run_forward(solv: Solv, P_sph: SPHptl, P_bnd: BNDptl) -> None:
+def run_forward(solv: Solv,
+                P_sph: SPHptl,
+                P_bnd: BNDptl,
+                grid_sph: wp.HashGrid,
+                grid_bnd: wp.HashGrid) -> None:
     """
     Run Forward SPH Simulation
 
     solv: configuration of solv file
     P_sph: Particle structure of SPH particles      [N_sph]
-    P_bnd: Particle structure of BND particles      [N_bnd] 
+    P_bnd: Particle structure of BND particles      [N_bnd]
+    grid_sph: HashGrid for SPH particles
+    grid_bnd: HashGrid for BND particles
     """
     print(f"\n[forward] {solv.n_steps} step \t\t (t={solv.n_steps*solv.dt:.3f} s\tdt={solv.dt:.1e} s)\n")
-    for _ in range(solv.n_steps):
-        SPH_OneStep(solv.dt, P_sph, P_bnd)
+    grid_bnd.build(points=P_bnd.pos, radius=solv.support)
+
+    # [(file name, t), ...] of every frame written, collected for the .pvd
+    frames: list[tuple[str, float]] = []
+    if solv.output_step > 0:
+        frames.append(save_vtk(P_sph, P_bnd, 0, 0.0))
+
+    for step in range(solv.n_steps):
+        grid_sph.build(points=P_sph.pos, radius=solv.support)
+        SPH_OneStep(solv, P_sph, P_bnd, grid_sph, grid_bnd, step)
+
+        # the state after this step belongs to step+1
+        if solv.output_step > 0 and (step + 1) % solv.output_step == 0:
+            frames.append(save_vtk(P_sph, P_bnd, step + 1, (step + 1) * solv.dt))
+            print(f"[output] step {step+1:>6d} / {solv.n_steps}\t t={(step+1)*solv.dt:.4f} s")
+
+    if frames:
+        path = save_pvd(frames)
+        print(f"\n[output] {len(frames)} frames -> {path}\n")
     
 
 
@@ -37,6 +61,15 @@ def run_forward(solv: Solv, P_sph: SPHptl, P_bnd: BNDptl) -> None:
 def main() -> None:
     args = parsing()
     solv = Solv(**args)
+    wp.init()
     dam_generater = DamPtlGeneration(solv=solv)
 
     P_sph, P_bnd = dam_generater.build()            # [N_sph, SPHptl], [N_bnd, BNDptl]
+    grid_sph = wp.HashGrid(solv.grid_slice, solv.grid_slice, 1)
+    grid_bnd = wp.HashGrid(solv.grid_slice, solv.grid_slice, 1)
+
+    run_forward(solv, P_sph, P_bnd, grid_sph, grid_bnd)
+
+
+if __name__ == "__main__":
+    main()

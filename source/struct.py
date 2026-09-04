@@ -7,13 +7,14 @@ class SPHptl:
     - SoA structure
     - Read with "P.pos[i]"
     """
-    pos: wp.array(dtype=wp.vec3)        # [N_sph]   Position       [m]
-    vel: wp.array(dtype=wp.vec3)        # [N_sph]   Velocity       [m/s]
-    rho_raw: wp.array(dtype=float)      # [N_sph]   Density (direct summation)     [kg/m^3]
-    rho: wp.array(dtype=float)          # [N_sph]   Density (after Shepard filter) [kg/m^3]
-    pres: wp.array(dtype=float)         # [N_sph]   Pressure       [Pa]
-    acc: wp.array(dtype=wp.vec3)        # [N_sph]   Acceleration   [m/s^2]
-    p_type: wp.array(dtype=int)         # [N_sph]   Particle type  (always 1)
+    pos: wp.array(dtype=wp.vec3)        # [N_sph,3]     Position                        [m]
+    vel: wp.array(dtype=wp.vec3)        # [N_sph,3]     Velocity                        [m/s]
+    rho_raw: wp.array(dtype=float)      # [N_sph]       Density (direct summation)      [kg/m^3]
+    rho: wp.array(dtype=float)          # [N_sph]       Density (after Shepard filter)  [kg/m^3]
+    pres: wp.array(dtype=float)         # [N_sph]       Pressure                        [Pa]
+    acc: wp.array(dtype=wp.vec3)        # [N_sph,3]     Acceleration                    [m/s^2]
+    m: wp.array(dtype=float)            # [N_sph]       Mass                            [kg]
+    flt: wp.array(dtype=float)          # [N_sph]       Shepard filter (SPH+BND)   
 
 @wp.struct
 class BNDptl:
@@ -22,10 +23,10 @@ class BNDptl:
     - SoA structure
     - Read with "B.pos[i]"
     """
-    pos: wp.array(dtype=wp.vec3)        # [N_bnd]   Position       [m]
-    vel: wp.array(dtype=wp.vec3)        # [N_bnd]   Velocity       [m/s]
-    rho_raw: wp.array(dtype=float)      # [N_bnd]   Density (direct summation)     [kg/m^3]
-    rho: wp.array(dtype=float)          # [N_bnd]   Density (after Shepard filter) [kg/m^3]
-    pres: wp.array(dtype=float)         # [N_bnd]   Pressure       [Pa]
-    acc: wp.array(dtype=wp.vec3)        # [N_bnd]   Acceleration   [m/s^2]
-    p_type: wp.array(dtype=int)         # [N_bnd]   Particle type  (always 0)
+    pos: wp.array(dtype=wp.vec3)        # [N_bnd,3]     Position                        [m]
+    vel: wp.array(dtype=wp.vec3)        # [N_bnd,3]     Velocity                        [m/s]
+    rho_raw: wp.array(dtype=float)      # [N_bnd]       Density (direct summation)      [kg/m^3]
+    rho: wp.array(dtype=float)          # [N_bnd]       Density (after Shepard filter)  [kg/m^3]
+    pres: wp.array(dtype=float)         # [N_bnd]       Pressure                        [Pa]
+    acc: wp.array(dtype=wp.vec3)        # [N_bnd,3]     Acceleration                    [m/s^2]
+    m: wp.array(dtype=float)            # [N_bnd]       Mass                            [kg]   

@@ -79,6 +79,7 @@ class DamPtlGeneration:
         n_bnd = len(bnd_pos)
 
         dev = solv.device
+        mass = solv.rho0 * solv.dx * solv.dx    # 2D mass
 
         sph = SPHptl()
         sph.pos     = wp.array(fluid_pos, dtype=wp.vec3, device=dev)
@@ -87,7 +88,8 @@ class DamPtlGeneration:
         sph.rho     = wp.full(n_sph, solv.rho0, dtype=float, device=dev)
         sph.pres    = wp.zeros(n_sph, dtype=float,     device=dev)
         sph.acc     = wp.zeros(n_sph, dtype=wp.vec3,  device=dev)
-        sph.p_type  = wp.full(n_sph, 1, dtype=int,    device=dev)
+        sph.m       = wp.full(n_sph, mass, dtype=float, device=dev)
+        sph.flt     = wp.zeros(n_sph, dtype=float, device=dev)
 
         bnd = BNDptl()
         bnd.pos     = wp.array(bnd_pos, dtype=wp.vec3, device=dev)
@@ -96,6 +98,6 @@ class DamPtlGeneration:
         bnd.rho     = wp.full(n_bnd, solv.rho0, dtype=float, device=dev)
         bnd.pres    = wp.zeros(n_bnd, dtype=float,     device=dev)
         bnd.acc     = wp.zeros(n_bnd, dtype=wp.vec3,  device=dev)
-        bnd.p_type  = wp.full(n_bnd, 0, dtype=int,    device=dev)
+        bnd.m       = wp.full(n_bnd, mass, dtype=float, device=dev)
 
         return sph, bnd

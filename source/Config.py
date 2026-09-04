@@ -16,6 +16,8 @@ class Solv:
     fluid_origin_x: 유체 블록 왼쪽 아래 모서리 x
     fluid_origin_y: 유체 블록 왼쪽 아래 모서리 y
     bnd_layer: dummy boundary particle 겹 수
+    h: smoothing length
+    support: Support radius
 
     # physical coefficient
     rho0: 기준 밀도
@@ -27,9 +29,18 @@ class Solv:
     h_factor: h 자동 계산에 쓰는 배수 (h = h_factor * dx)
     kernel_type: SPH 커널 종류 ("cubic" 또는 "wendland")
 
+    # density filter
+    shepard_step: Shepard filter 적용 주기 [step]
+
     # PDE solver hyperparameter
     dt: 시간 간격. 0 이면 cfl * h / c0 로 자동 계산
     n_steps: 순방향 시뮬레이션 스텝 수
+
+    # output
+    output_step: 입자 상태를 vtk 로 뽑는 주기 [step]. 0 이면 출력하지 않는다
+
+    # hash grid
+    grid_slice: HashGrid 해시 버킷 한 변의 개수
     """
     # project property
     device: str = "cuda:0"
@@ -42,18 +53,28 @@ class Solv:
     fluid_height: float = 0.5
     fluid_origin_x: float = 0.0
     fluid_origin_y: float = 0.0
-    bnd_layer: int = 3
+    bnd_layer: int = 4
+    h: float = 2.0 * 0.02
+    support: float = 2.0 * (2.0 * 0.02)
 
     # physical coefficient
     rho0: float = 1000.0
     gamma: float = 7.0
-    c0: float = 0.0
+    c0: float = 50.0
     mu: float = 0.05
     g: float = 9.81
-    h: float = 0.0
     h_factor: float = 1.3
     kernel_type: str = "cubic"
 
+    # density filter
+    shepard_step: int = 20
+
     # PDE solver hyperparameter
-    dt: float = 0.0
-    n_steps: int = 4000
+    dt: float = 1e-5
+    n_steps: int = 50000
+
+    # output
+    output_step: int = 500
+
+    # hash grid
+    grid_slice: int = 128

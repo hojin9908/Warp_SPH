@@ -1,6 +1,9 @@
 import warp as wp
 import math
 
+# To Exclude itself
+R2_MIN = wp.constant(1.0e-12)
+
 @wp.func
 def Kernel_w_Wendland(r: float, h: float) -> float:
     """
